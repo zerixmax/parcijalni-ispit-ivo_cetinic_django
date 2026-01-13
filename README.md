@@ -55,4 +55,4 @@
 - `static/css/style.css` - Custom premium styling.
 
 ---
-**Build by PyZ3R | 2026 | Algebra Graduate Project**
+**Build by PyZ3R | 2026 | Algebra Project**
