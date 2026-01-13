@@ -15,14 +15,9 @@ class Offer(models.Model):
     items = models.ManyToManyField(Product, through='OfferItem')  # Many-to-Many relationship with Product
 
     def __str__(self):
-        return f"Offer #{self.id} - Customer: {self.customer.name}, Creator: {self.created_by.username}, Total: ${self.total}"
-
-    def save(self, *args, **kwargs):
-        """
-        Override save to include any custom logic before saving.
-        Django automatically handles insert/update based on whether the instance has a primary key.
-        """
-        super().save(*args, **kwargs)
+        customer_name = self.customer.name if self.customer else "N/A"
+        creator_name = self.created_by.username if self.created_by else "N/A"
+        return f"Offer #{self.id} - Customer: {customer_name}, Creator: {creator_name}, Total: ${self.total}"
 
     @classmethod
     def from_tuple(cls, data):
