@@ -1,11 +1,25 @@
-#!/usr/bin/env python
-"""Django's command-line utility for administrative tasks."""
 import os
 import sys
 
 
 def main():
     """Run administrative tasks."""
+    # Green color ANSI escape code
+    GREEN = "\033[92m"
+    RESET = "\033[0m"
+    
+    print(f"{GREEN}")
+    print(r"""
+    ____      ______ _____ ____ 
+   / __ \__  /__  /|__  /|  _ \
+  / /_/ / / / / / /  /_ < | |_) |
+ / ____/ /_/ / / /____/ / |  _ < 
+/_/    \__, / /____/____/ |_| \_\
+      /____/                     
+    """)
+    print("    pyz3r | 2026 | Algebra")
+    print(f"{RESET}")
+
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'offers_calculator.settings')
     try:
         from django.core.management import execute_from_command_line

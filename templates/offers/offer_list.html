@@ -22,6 +22,7 @@
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">Customer</th>
+                        <th scope="col">Creator</th>
                         <th scope="col">Date</th>
                         <th scope="col">Total</th>
                         <th scope="col">Actions</th>
@@ -30,8 +31,10 @@
                 <tbody>
                     {% for offer in offers %}
                     <tr>
-                        <td><a href="{% url 'offer_detail' offer.id %}" class="text-decoration-none">#{{ offer.id }}</a></td>
-                        <td>{{ offer.customer.username }}</td>
+                        <td><a href="{% url 'offer_detail' offer.id %}" class="text-decoration-none">#{{ offer.id }}</a>
+                        </td>
+                        <td>{{ offer.customer.name }}</td>
+                        <td>{{ offer.created_by.username }}</td>
                         <td>{{ offer.date }}</td>
                         <td>${{ offer.total }}</td>
                         <td>

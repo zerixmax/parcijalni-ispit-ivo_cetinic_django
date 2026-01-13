@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from products.models import Product
 from offers.models import Offer, OfferItem
+from customers.models import Customer
 from decimal import Decimal
 from random import randint, choice
 from datetime import datetime, timedelta
@@ -72,6 +73,24 @@ def run():
     else:
         print("Products already exist, skipping seeding.")
 
+    # List of customer data
+    customer_data = [
+        {"name": "Tech Corp", "vat_id": "12345678901", "street": "Main St 1", "city": "Zagreb", "country": "Croatia"},
+        {"name": "Innovation Ltd", "vat_id": "98765432109", "street": "Innovation Way 5", "city": "Split", "country": "Croatia"},
+        {"name": "Global Solutions", "vat_id": "55566677788", "street": "Market Square 10", "city": "Rijeka", "country": "Croatia"},
+        {"name": "Eco Friendly S.A.", "vat_id": "11122233344", "street": "Green Road 2", "city": "Osijek", "country": "Croatia"},
+        {"name": "Cyber Security Inc", "vat_id": "99988877766", "street": "Safe Avenue 12", "city": "Zadar", "country": "Croatia"},
+    ]
+
+    # Create customers
+    if Customer.objects.count() == 0:
+        print("Seeding 5 customers...")
+        for customer in customer_data:
+            Customer.objects.create(**customer)
+        print("Customers seeded successfully.")
+    else:
+        print("Customers already exist, skipping seeding.")
+
     # Get superuser account
     superuser = User.objects.filter(is_superuser=True).first()
     if not superuser:
@@ -82,6 +101,7 @@ def run():
     if Offer.objects.count() == 0:
         print("Seeding 15 offers...")
         products = list(Product.objects.all())
+        customers = list(Customer.objects.all())
         for i in range(1, 16):
             offer_date = datetime.now() - timedelta(days=randint(1, 30))
             selected_products = [choice(products) for _ in range(randint(3, 7))]
@@ -91,7 +111,8 @@ def run():
             total = sub_total + tax
 
             offer = Offer.objects.create(
-                customer=superuser,
+                created_by=superuser,
+                customer=choice(customers),
                 date=offer_date.date(),
                 sub_total=sub_total,
                 tax=tax,
