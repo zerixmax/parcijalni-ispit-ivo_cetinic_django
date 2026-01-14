@@ -32,3 +32,20 @@ Danas smo uspješno implementirali napredne funkcionalnosti u aplikaciji `custom
 
 ---
 *Ovim promjenama sustav je postao stabilniji, kod je čišći (DRY princip), a unos podataka je siguran zahvaljujući strogoj validaciji.*
+
+## Dodatak - Refaktoriranje aplikacije `products`
+
+Nakon uspješnog refaktoriranja kupaca, isti principi su primijenjeni i na proizvode:
+
+1. **Implementacija `ProductForm`:**
+   - Kreirana forma u `products/forms.py` s Bootstrap stilizacijom.
+   - Polja: `name`, `description`, `price`.
+
+2. **Prijelaz na Class-Based Views:**
+   - Implementirani `ProductListView`, `ProductDetailView`, `ProductCreateView` i `ProductUpdateView`.
+   - Dodana podrška za **JSON response** u list i detail view-ovima, čime su ovi view-ovi postali kompatibilni s API zahtjevima.
+
+3. **URL i Template ažuriranja:**
+   - `products/urls.py` prilagođen za CBV.
+   - HTML predlošci za kreiranje i uređivanje proizvoda sada koriste `{{ form }}` za dosljedan prikaz i lakšu obradu grešaka.
+
