@@ -1,53 +1,31 @@
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse_lazy
+from django.views.generic import ListView, CreateView, UpdateView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Customer
+from .forms import CustomerForm  # Tvoja forma s OIB validacijom
 
-@login_required
-def customer_list(request):
-    """
-    View to display a list of all customers.
-    """
-    customers = Customer.get_all()
-    return render(request, 'customers/customer_list.html', {'customers': customers})
+# Zamjena za def customer_list
+class CustomerListView(LoginRequiredMixin, ListView):
+    model = Customer
+    template_name = 'customers/customer_list.html'
+    context_object_name = 'customers'
 
-@login_required
-def customer_create(request):
-    """
-    View to create a new customer.
-    """
-    if request.method == 'POST':
-        name = request.POST.get('name')
-        vat_id = request.POST.get('vat_id')
-        street = request.POST.get('street')
-        city = request.POST.get('city')
-        country = request.POST.get('country')
+    # Opcionalno: ako želiš koristiti svoju metodu get_all(), možeš overrideati get_queryset
+    # def get_queryset(self):
+    #     return Customer.get_all()
 
-        if all([name, vat_id, street, city, country]):
-            Customer.objects.create(
-                name=name, 
-                vat_id=vat_id, 
-                street=street, 
-                city=city, 
-                country=country
-            )
-            return redirect('customer_list')
-        return render(request, 'customers/customer_create_form.html', {'error': 'All fields are required.'})
+# Zamjena za def customer_create
+class CustomerCreateView(LoginRequiredMixin, CreateView):
+    model = Customer
+    form_class = CustomerForm
+    template_name = 'customers/customer_create_form.html'
+    success_url = reverse_lazy('customer_list') # Kamo preusmjeriti nakon uspjeha
 
-    return render(request, 'customers/customer_create_form.html')
+    # Ovdje ne trebaš pisati logiku za POST/GET niti form.save(), Django to radi sam!
 
-@login_required
-def customer_update(request, pk):
-    """
-    View to update an existing customer.
-    """
-    customer = get_object_or_404(Customer, pk=pk)
-    if request.method == 'POST':
-        customer.name = request.POST.get('name', customer.name)
-        customer.vat_id = request.POST.get('vat_id', customer.vat_id)
-        customer.street = request.POST.get('street', customer.street)
-        customer.city = request.POST.get('city', customer.city)
-        customer.country = request.POST.get('country', customer.country)
-        customer.save()
-        return redirect('customer_list')
-
-    return render(request, 'customers/customer_edit_form.html', {'customer': customer})
+# Zamjena za def customer_update
+class CustomerUpdateView(LoginRequiredMixin, UpdateView):
+    model = Customer
+    form_class = CustomerForm
+    template_name = 'customers/customer_edit_form.html'
+    success_url = reverse_lazy('customer_list')

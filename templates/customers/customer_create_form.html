@@ -11,32 +11,28 @@
                     <h2 class="mb-0">Add New Customer</h2>
                 </div>
                 <div class="card-body">
-                    {% if error %}
-                    <div class="alert alert-danger">{{ error }}</div>
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                        Please correct the errors below.
+                    </div>
                     {% endif %}
+
                     <form method="POST">
                         {% csrf_token %}
+
+                        {% for field in form %}
                         <div class="mb-3">
-                            <label for="name" class="form-label">Company Name</label>
-                            <input type="text" class="form-control" id="name" name="name" required>
+                            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}
+                            <div class="text-danger small">
+                                {{ field.errors.0 }}
+                            </div>
+                            {% endif %}
                         </div>
-                        <div class="mb-3">
-                            <label for="vat_id" class="form-label">VAT ID (OIB)</label>
-                            <input type="text" class="form-control" id="vat_id" name="vat_id" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="street" class="form-label">Street</label>
-                            <input type="text" class="form-control" id="street" name="street" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="city" class="form-label">City</label>
-                            <input type="text" class="form-control" id="city" name="city" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="country" class="form-label">Country</label>
-                            <input type="text" class="form-control" id="country" name="country" required>
-                        </div>
-                        <div class="d-flex justify-content-between">
+                        {% endfor %}
+
+                        <div class="d-flex justify-content-between mt-4">
                             <a href="{% url 'customer_list' %}" class="btn btn-secondary">Cancel</a>
                             <button type="submit" class="btn btn-primary">Save Customer</button>
                         </div>
