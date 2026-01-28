@@ -14,12 +14,6 @@ class Customer(models.Model):
     def __str__(self) -> str:
         return self.name
 
-    def save(self, *args: Any, **kwargs: Any) -> None:
-        """
-        Overrides the save method to include any custom logic.
-        """
-        super().save(*args, **kwargs)
-
     @classmethod
     def get_all(cls):
         """
