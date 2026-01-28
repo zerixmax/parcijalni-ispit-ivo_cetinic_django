@@ -7,6 +7,7 @@ from customers.models import Customer
 from django.contrib.auth.models import User
 from django.views.decorators.http import require_http_methods
 from decimal import Decimal
+from collections import Counter
 
 
 @login_required
@@ -87,8 +88,11 @@ def offer_create(request):
         product_ids = request.POST.getlist('items')
 
         # Calculate sub_total, tax, and total dynamically
+        product_ids = [int(pid) for pid in product_ids]
         products = Product.objects.filter(id__in=product_ids)
-        sub_total = sum(product.price for product in products)
+        product_map = {p.id: p for p in products}
+
+        sub_total = sum(product_map[pid].price for pid in product_ids if pid in product_map)
         tax = sub_total * Decimal('0.2')  # Assuming a fixed 20% tax rate
         total = sub_total + tax
 
@@ -102,8 +106,11 @@ def offer_create(request):
             total=total
         )
 
-        for product in products:
-            OfferItem.objects.create(offer=offer, product=product, quantity=1)
+        # Create OfferItems with quantities
+        counts = Counter(product_ids)
+        for pid, quantity in counts.items():
+            if pid in product_map:
+                OfferItem.objects.create(offer=offer, product=product_map[pid], quantity=quantity)
 
         return redirect('offer_list')
 
@@ -133,8 +140,11 @@ def offer_edit(request, pk):
         selected_product_ids = request.POST.getlist('items')
 
         # Calculate sub_total, tax, and total dynamically
+        selected_product_ids = [int(pid) for pid in selected_product_ids]
         selected_products = Product.objects.filter(id__in=selected_product_ids)
-        sub_total = sum(product.price for product in selected_products)
+        product_map = {p.id: p for p in selected_products}
+
+        sub_total = sum(product_map[pid].price for pid in selected_product_ids if pid in product_map)
         tax = sub_total * Decimal('0.2')  # Assuming a fixed 20% tax rate
         total = sub_total + tax
 
@@ -148,8 +158,10 @@ def offer_edit(request, pk):
 
         # Update offer items
         OfferItem.objects.filter(offer=offer).delete()
-        for product in selected_products:
-            OfferItem.objects.create(offer=offer, product=product, quantity=1)
+        counts = Counter(selected_product_ids)
+        for pid, quantity in counts.items():
+            if pid in product_map:
+                OfferItem.objects.create(offer=offer, product=product_map[pid], quantity=quantity)
 
         return redirect('offer_detail', pk=offer.id)
 
